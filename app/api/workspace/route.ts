@@ -20,7 +20,8 @@ const actions=z.discriminatedUnion('action',[
 ]);
 class ApiError extends Error { constructor(message:string,public status=400){super(message);} }
 async function user() {
- const {user}=await auth.getSession();
+ const {data:session}=await auth.getSession();
+ const user=session?.user;
  if(!user) throw new ApiError('Sign in to open your workspace.',401);
  await db()`INSERT INTO app_users(id,name,email) VALUES(${user.id},${user.name||user.email},${user.email.toLowerCase()}) ON CONFLICT(id) DO UPDATE SET name=excluded.name,email=excluded.email,updated_at=now()`;
  return user;
