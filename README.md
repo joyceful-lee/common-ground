@@ -6,10 +6,11 @@ A group project workspace built with Next.js, Neon Postgres, and Neon Auth, prep
 
 - A project grid with per-project progress and lead/member filters.
 - Independent project memberships, so a user can lead one project and contribute to another.
-- Lead-controlled task creation, assignment, deadlines, priorities, and sprint planning.
-- A five-stage board: backlog, to do, in progress, in review, and done. Assignees can update their own task status.
-- A project overview and month calendar, with sprint dates and task deadlines.
-- Shared notes and shoutouts, plus private one-to-one conversations between project peers.
+- Member task submissions with a leader approval queue, alongside lead-controlled assignments, deadlines, priorities, and chapter planning.
+- A five-stage board with collapsible cards, leader editing, and recoverable removal. Assignees can update approved task status.
+- A project overview with chapter navigation and a month calendar with colored chapter lines through their dates.
+- Shared notes and shoutouts with comments and toggleable reactions, plus private one-to-one conversations between project peers.
+- Leader-managed project cover uploads (PNG, JPEG, or WebP, up to 500 KB), with an option to restore the original artwork, and a custom favicon.
 - Email-bound invitation links that expire after seven days. Invitations are shared manually; the app does not send invitation emails.
 - Email/password registration and sign-in through managed Neon Auth.
 - An explicitly labeled example workspace stored only in the visitor’s browser. Authenticated work is stored in Neon and refreshed every 15 seconds.
@@ -37,6 +38,8 @@ Create an ignored `.env.local` from `.env.example` and configure:
 
 The initial schema in `db/schema.sql` is already applied to the provisioned database. On a separate database, apply it once through the Neon SQL editor before starting the app.
 
+Existing installations can apply `db/002-collaboration.sql` to add approval state, recoverable task removal, project covers, note comments, and note reactions. Existing tasks retain approved status. The database and API keep the internal `sprints` name for compatibility; the interface calls these planning periods “chapters.”
+
 Run `npm run dev` and open http://localhost:3100. `npm run typecheck` checks types and `npm run build` produces the production build.
 
 ## Access and storage
@@ -47,7 +50,7 @@ Database access is server-only and uses the Neon database owner connection. Row 
 
 ## Verification
 
-Start the local server, then run `npm test`. The integration script creates three isolated verification users and private fixture projects. It checks real Neon sign-in sessions, unauthenticated rejection, multiple-project roles, email-bound invitations, task assignment and status permissions, sprint/deadline validation, shared notes, private message filtering, and read state. It leaves fixtures owned only by verification accounts for inspection and does not send messages to real people.
+Start the local server, then run `npm test`. The integration script creates three isolated verification users and private fixture projects. It checks real Neon sessions, multiple-project roles, invitations, member task submission, leader approval/decline, task edits and removal/restore, chapter/deadline validation, comments and reaction toggling, cover upload permissions, private messages, and cross-project isolation. It leaves fixtures owned only by verification accounts for inspection and does not contact real people.
 
 ## Vercel and GitHub deployment
 

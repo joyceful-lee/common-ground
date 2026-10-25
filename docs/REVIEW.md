@@ -13,16 +13,20 @@ The application uses Fraunces for its expressive headings and DM Sans for workin
 | Neon authentication | Three generated verification accounts successfully registered and authenticated |
 | Multiple project roles | The same account led one project and joined another as a member |
 | Invitations | Correct recipient accepted; a different account was rejected |
-| Task planning | Lead created a sprint, assigned a task, and persisted its due date |
+| Task planning | Lead created a chapter, assigned a task, and persisted its due date |
+| Task submissions | Members submitted pending tasks; only leaders could approve or decline; pending/declined tasks could not be started |
+| Task editing and removal | Leader changes persisted; removed tasks disappeared and could be restored; members were denied planning mutations |
 | Task authorization | Members could update their own assigned task status; unrelated users were rejected |
 | Date validation | An impossible calendar date was rejected |
 | Shared notes | Members published a shoutout visible to the project lead; outsiders were rejected |
+| Note conversations | Comments persisted for peers; reactions toggled without duplicate records; outsiders and mismatched project IDs were rejected |
+| Project covers | Leader uploads persisted for peers; members and unsupported SVG uploads were rejected; original artwork could be restored |
 | Private messages | Participants could exchange/read messages; outsiders could neither send nor retrieve them |
 | Read state | Reading a conversation persisted the read timestamp |
-| Browser interaction | Created an example task with an assignee, deadline, and sprint; verified calendar navigation and project/message views |
+| Browser interaction | Verified chapter navigation and its progress counts, collapse/expand, task edit/save, removal/undo, comments/reactions, and a member submission appearing in the approval queue |
 | Responsive layout | Reviewed at 1440×1000, 390×844, and 304×700; fixed narrow navigation and search overflow |
 | Browser console | No console entries during the final browser review |
-| Database | All eight application tables exist with row-level security enabled |
+| Database | Ten application tables have row-level security enabled; collaboration migration preserves existing tasks |
 | Secrets | Local environment files are ignored; only `.env.example` is tracked |
 
 The integration tests created private verification records under generated accounts and did not contact real people. The visible example workspace is separate, browser-local data. New real users receive their own empty workspace.

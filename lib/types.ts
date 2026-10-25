@@ -1,8 +1,10 @@
 export type User={id:string;name:string;email:string};
-export type Project={id:string;name:string;description:string;color:string;due_date:string|null;role:'lead'|'member'};
+export type Project={id:string;name:string;description:string;color:string;image_data?:string|null;due_date:string|null;role:'lead'|'member'};
 export type Member=User & {project_id:string;role:'lead'|'member'};
-export type Task={id:string;project_id:string;title:string;description:string;assignee_id:string|null;status:string;priority:string;due_date:string|null;sprint_id:string|null};
+export type Task={id:string;project_id:string;title:string;description:string;assignee_id:string|null;status:string;priority:string;due_date:string|null;sprint_id:string|null;approval?:'pending'|'approved'|'declined';submitted_by?:string|null};
 export type Sprint={id:string;project_id:string;name:string;start_date:string;end_date:string};
 export type Note={id:string;project_id:string;author_id:string;body:string;kind:string;created_at:string};
 export type Message={id:string;sender_id:string;recipient_id:string;body:string;created_at:string;read_at:string|null};
-export type Data={projects:Project[];members:Member[];tasks:Task[];sprints:Sprint[];notes:Note[];messages:Message[]};
+export type NoteComment={id:string;note_id:string;author_id:string;body:string;created_at:string};
+export type NoteReaction={note_id:string;user_id:string;reaction:string};
+export type Data={projects:Project[];members:Member[];tasks:Task[];sprints:Sprint[];notes:Note[];messages:Message[];comments:NoteComment[];reactions:NoteReaction[]};
