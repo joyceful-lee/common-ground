@@ -16,6 +16,7 @@ A group project workspace built with Next.js, Neon Postgres, and Neon Auth, prep
 
 ## Resources
 
+- Live application: https://common-ground-mu.vercel.app
 - GitHub: https://github.com/joyceful-lee/common-ground (private)
 - Vercel project: `common-ground`, team `leejoyce21-7656`
 - Neon project: `divine-fire-27110888`, production branch `br-divine-tree-akdohonq`, database `common_ground`
@@ -52,8 +53,8 @@ Start the local server, then run `npm test`. The integration script creates thre
 
 The checkout is linked through the ignored `.vercel/project.json`. In Vercel, connect the existing project to `joyceful-lee/common-ground`, using the repository root, Next.js detection, and `main` for production. Git pushes then produce deployments.
 
-Add `DATABASE_URL`, `NEON_AUTH_BASE_URL`, and `NEON_AUTH_COOKIE_SECRET` as server-side Vercel environment variables. Use a separate Neon branch and Auth endpoint for previews when isolating preview data. The local and production cookie secrets should be independently generated.
+The production deployment has `DATABASE_URL`, `NEON_AUTH_BASE_URL`, and an independently generated `NEON_AUTH_COOKIE_SECRET` configured as server-side Vercel environment variables. Database and cookie secrets use sensitive storage. Use a separate Neon branch and Auth endpoint for previews when isolating preview data.
 
-Add the final production origin to Neon Auth’s trusted domains. Localhost is enabled by the Neon Auth project for development. Register each preview origin explicitly when testing authentication on previews.
+The production origins `https://common-ground-mu.vercel.app` and `https://common-ground-leejoyce21-7656.vercel.app` are registered in Neon Auth’s trusted domains. Localhost is enabled for development. Register each preview origin explicitly when testing authentication on previews.
 
 Run the production build before deploying. `vercel.json` places server functions in `pdx1`, near the Neon database in AWS US West (Oregon). The application has no external email delivery service, attachments, or push-notification dependency.

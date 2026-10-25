@@ -31,9 +31,9 @@ Database owner access remains server-only. As described in the README, the datab
 
 ## Deployment state
 
-The private GitHub repository and Vercel project are connected. The automatic Vercel build reached authentication configuration and failed because its cookie secret is not yet configured. Automatic approval review blocked transferring the database credential to Vercel without explicit authorization.
+The private GitHub repository and Vercel project are connected, and production is live at https://common-ground-mu.vercel.app. Production database and authentication environment variables are configured, with sensitive storage for the database credential and an independently generated cookie signing secret. The production origins are registered in Neon Auth’s trusted domains.
 
-To complete production setup, authorize encrypted production environment variables for `DATABASE_URL`, `NEON_AUTH_BASE_URL`, and a securely generated `NEON_AUTH_COOKIE_SECRET`, add the final origin to Neon Auth’s trusted domains, and redeploy the verified commit.
+Vercel deployed application commit `b51b444e04bcaafb93abc771226198065a2c7431` with status `READY`. The complete integration suite was then run against the live URL and passed, including registration, authenticated sessions, multiple project roles, recipient-bound invitations, task permissions, shared notes, private messaging, and read state. The hosted sign-in page and Neon-backed session endpoint also returned successful responses. Vercel’s existing deployment protection settings were preserved.
 
 Invitation links are shared manually and expire after seven days; the app does not send invitation emails. Workspace updates are fetched every fifteen seconds.
 
