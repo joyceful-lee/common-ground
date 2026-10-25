@@ -39,6 +39,8 @@ The private GitHub repository and Vercel project are connected, and production i
 
 Vercel deployed application commit `b51b444e04bcaafb93abc771226198065a2c7431` with status `READY`. The complete integration suite was then run against the live URL and passed, including registration, authenticated sessions, multiple project roles, recipient-bound invitations, task permissions, shared notes, private messaging, and read state. The hosted sign-in page and Neon-backed session endpoint also returned successful responses. Vercel’s existing deployment protection settings were preserved.
 
+The collaboration update at application commit `38b675814ef69c1c9d69e473039a155bd5770468` deployed with status `READY` as `dpl_8nCjGcYhuwSysUDGQtJntdyQ7972`. The expanded integration suite passed against both the local production build and the live production URL, covering approval/decline, edit/remove/restore, note conversations, cover permissions, and existing auth/message flows. The hosted dashboard and calendar rendered successfully with no browser warnings or errors, and the document declares the custom SVG favicon.
+
 Invitation links are shared manually and expire after seven days; the app does not send invitation emails. Workspace updates are fetched every fifteen seconds.
 
 ## Screenshots
