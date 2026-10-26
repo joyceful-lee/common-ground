@@ -23,6 +23,12 @@ async function client(name){
 const anonymous=await fetch(base+'/api/workspace');assert.equal(anonymous.status,401);console.log('PASS anonymous access rejected');
 const lead=await client('lead'),member=await client('member'),outsider=await client('outsider');
 console.log('PASS three Neon Auth accounts and sessions');
+const avatar='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jQWQAAAAASUVORK5CYII=';
+assert.equal((await lead.request('/api/workspace',{action:'profile-photo',avatar_data:avatar,user_id:member.id})).status,200);
+assert.equal((await lead.request('/api/workspace')).data.profile.avatar_data,avatar);
+assert.equal((await member.request('/api/workspace')).data.profile.avatar_data,null);
+assert.equal((await member.request('/api/workspace',{action:'profile-photo',avatar_data:'data:image/svg+xml;base64,PHN2Zz4='})).status,400);
+assert.equal((await lead.request('/api/workspace',{action:'profile-photo',avatar_data:'https://example.com/photo.jpg'})).status,400);
 const create=await lead.request('/api/workspace',{action:'project',name:`Verification workspace ${stamp}`,description:'Private integration fixture.',color:'sage',due_date:'2026-11-30'});assert.equal(create.status,200);const pid=create.data.id;
 const second=await member.request('/api/workspace',{action:'project',name:`Verification independent project ${stamp}`,description:'Role isolation fixture.',color:'blue'});assert.equal(second.status,200);
 const invite=await lead.request('/api/workspace',{action:'invite',project_id:pid,email:member.email,role:'member'});assert.equal(invite.status,200);
@@ -30,6 +36,10 @@ assert.equal((await outsider.request('/api/workspace',{action:'join',token:invit
 assert.equal((await member.request('/api/workspace',{action:'join',token:invite.data.token})).status,200);
 const state=(await member.request('/api/workspace')).data;assert.equal(state.projects.find(p=>p.id===pid).role,'member');assert.equal(state.projects.find(p=>p.id===second.data.id).role,'lead');
 console.log('PASS email-bound invitation and independent per-project roles');
+assert.equal((await member.request('/api/workspace')).data.members.find(m=>m.id===lead.id&&m.project_id===pid).avatar_data,avatar);
+assert.equal((await lead.request('/api/workspace',{action:'profile-photo',avatar_data:null})).status,200);
+assert.equal((await member.request('/api/workspace')).data.members.find(m=>m.id===lead.id&&m.project_id===pid).avatar_data,null);
+console.log('PASS own-profile photo persistence, peer visibility, removal, and rejection of unsupported images');
 const sprint=await lead.request('/api/workspace',{action:'sprint',project_id:pid,name:'Verification sprint',start_date:'2026-11-01',end_date:'2026-11-14',color:'violet'});assert.equal(sprint.status,200);
 const sprintId=(await lead.request('/api/workspace')).data.sprints.find(s=>s.project_id===pid).id;
 assert.equal((await member.request('/api/workspace')).data.sprints.find(s=>s.id===sprintId).color,'violet');
@@ -67,9 +77,12 @@ const declined=await member.request('/api/workspace',{...task,title:'Decline fix
 assert.equal((await lead.request('/api/workspace',{action:'approve-task',project_id:pid,id:declined.data.id,approval:'declined'})).status,200);
 assert.equal((await member.request('/api/workspace',{action:'status',id:declined.data.id,status:'done'})).status,403);
 console.log('PASS task workflows, sprint colors, inclusive due-date boundaries, and sprint edit validation');
-assert.equal((await member.request('/api/workspace',{action:'note',project_id:pid,kind:'shoutout',body:'Verification appreciation visible to the whole group.'})).status,200);
+assert.equal((await member.request('/api/workspace',{action:'note',project_id:pid,title:'When should we meet?',icon:'question',body:'Verification note visible to the whole group.'})).status,200);
 assert.ok((await lead.request('/api/workspace')).data.notes.some(n=>n.project_id===pid));
 const note=(await lead.request('/api/workspace')).data.notes.find(n=>n.project_id===pid);
+assert.equal(note.title,'When should we meet?');assert.equal(note.icon,'question');
+assert.equal((await member.request('/api/workspace',{action:'note',project_id:pid,title:'',icon:'urgent',body:'Empty title rejected'})).status,400);
+assert.equal((await member.request('/api/workspace',{action:'note',project_id:pid,title:'Invalid icon',icon:'script',body:'Unknown icon rejected'})).status,400);
 assert.equal((await member.request('/api/workspace',{action:'comment',project_id:pid,note_id:note.id,body:'A saved reply from a member.'})).status,200);
 assert.equal((await outsider.request('/api/workspace',{action:'comment',project_id:pid,note_id:note.id,body:'Not allowed'})).status,403);
 assert.equal((await member.request('/api/workspace',{action:'comment',project_id:second.data.id,note_id:note.id,body:'Wrong project'})).status,404);

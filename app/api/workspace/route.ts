@@ -9,6 +9,7 @@ const uuid=z.string().uuid();
 const date=z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(v=>!Number.isNaN(Date.parse(v))&&new Date(v).toISOString().slice(0,10)===v,'Invalid date').nullable().optional();
 const text=z.string().trim().min(1).max(5000);
 const actions=z.discriminatedUnion('action',[
+ z.object({action:z.literal('profile-photo'),avatar_data:z.string().max(250000).regex(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/).nullable()}),
  z.object({action:z.literal('project-image'),project_id:uuid,image_data:z.string().max(700000).regex(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/).nullable(),image_template:z.string().refine(id=>projectPhotos.some(p=>p.id===id),'Choose a photo from the gallery.').nullable().optional()}),
  z.object({action:z.literal('member'),project_id:uuid,user_id:z.string().min(1),operation:z.enum(['role','remove','transfer']),role:z.enum(['lead','member']).default('member')}),
  z.object({action:z.literal('archive-note'),project_id:uuid,id:uuid,archived:z.boolean()}),
@@ -20,7 +21,7 @@ const actions=z.discriminatedUnion('action',[
  z.object({action:z.literal('project'),name:text.pipe(z.string().max(100)),description:z.string().max(2000),color:z.enum(['rust','sage','blue','ochre']),due_date:date}),
  z.object({action:z.literal('task'),project_id:uuid,id:uuid.optional(),title:text.pipe(z.string().max(200)),description:z.string().max(5000),assignee_id:z.string().nullable(),status:z.enum(['backlog','todo','doing','review','done']),priority:z.enum(['low','medium','high']),due_date:date,sprint_id:uuid.nullable()}),
  z.object({action:z.literal('status'),id:uuid,status:z.enum(['backlog','todo','doing','review','done'])}),
- z.object({action:z.literal('note'),project_id:uuid,body:text,kind:z.enum(['note','shoutout'])}),
+ z.object({action:z.literal('note'),project_id:uuid,title:z.string().trim().min(1).max(120).default('Project update'),icon:z.enum(['none','urgent','question','idea','milestone']).default('none'),body:text,kind:z.enum(['note','shoutout']).default('note')}),
  z.object({action:z.literal('sprint'),project_id:uuid,id:uuid.optional(),name:text.pipe(z.string().max(100)),start_date:date,end_date:date,color:z.enum(['sage','rust','blue','ochre','violet','teal']).default('sage')}),
  z.object({action:z.literal('invite'),project_id:uuid,email:z.string().trim().email().max(254),role:z.enum(['lead','member'])}),
  z.object({action:z.literal('join'),token:uuid}),
@@ -47,22 +48,27 @@ function failure(error:unknown) {
 }
 export async function GET(){try{
  const u=await user(),sql=db();
- const [projects,members,tasks,sprints,notes,messages,comments,reactions]=await Promise.all([
+ const [projects,members,tasks,sprints,notes,messages,comments,reactions,profiles]=await Promise.all([
  sql`SELECT p.*,coalesce(p.owner_id,p.created_by) AS owner_id,m.role FROM projects p JOIN memberships m ON m.project_id=p.id WHERE m.user_id=${u.id} AND m.active ORDER BY p.created_at`,
- sql`SELECT u.id,u.name,u.email,m.project_id,m.role,m.active FROM app_users u JOIN memberships m ON m.user_id=u.id WHERE m.project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active)`,
+ sql`SELECT u.id,u.name,u.email,u.avatar_data,m.project_id,m.role,m.active FROM app_users u JOIN memberships m ON m.user_id=u.id WHERE m.project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active)`,
  sql`SELECT * FROM tasks WHERE removed_at IS NULL AND project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active) ORDER BY created_at`,
  sql`SELECT * FROM sprints WHERE project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active) ORDER BY start_date`,
  sql`SELECT * FROM notes WHERE project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active) ORDER BY created_at DESC`,
  sql`SELECT * FROM messages WHERE sender_id=${u.id} OR recipient_id=${u.id} ORDER BY created_at`,
  sql`SELECT c.* FROM note_comments c JOIN notes n ON n.id=c.note_id WHERE n.project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active) ORDER BY c.created_at`,
- sql`SELECT r.note_id,r.user_id,r.reaction FROM note_reactions r JOIN notes n ON n.id=r.note_id WHERE r.active AND n.project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active)`
+ sql`SELECT r.note_id,r.user_id,r.reaction FROM note_reactions r JOIN notes n ON n.id=r.note_id WHERE r.active AND n.project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active)`,
+ sql`SELECT id,name,email,avatar_data FROM app_users WHERE id=${u.id}`
  ]);
- return Response.json({projects,members,tasks,sprints,notes,messages,comments,reactions},{headers:{'Cache-Control':'private, no-store'}});
+ return Response.json({projects,members,tasks,sprints,notes,messages,comments,reactions,profile:profiles[0]},{headers:{'Cache-Control':'private, no-store'}});
  }catch(e){return failure(e);}}
 export async function POST(req:NextRequest){try{
  const origin=req.headers.get('origin');
  if(origin&&origin!==req.nextUrl.origin&&new URL(origin).host!==req.headers.get('host')) throw new ApiError('Request origin is not allowed.',403);
  const u=await user(),a=actions.parse(await req.json()),sql=db();
+ if(a.action==='profile-photo'){
+  await sql`UPDATE app_users SET avatar_data=${a.avatar_data},updated_at=now() WHERE id=${u.id}`;
+  return Response.json({ok:true});
+ }
  if(a.action==='project'){
   const rows=await sql`WITH p AS (INSERT INTO projects(name,description,color,due_date,created_by,owner_id) VALUES(${a.name},${a.description},${a.color},${a.due_date||null},${u.id},${u.id}) RETURNING *) INSERT INTO memberships(project_id,user_id,role) SELECT id,${u.id},'lead' FROM p RETURNING project_id`;
   return Response.json({id:rows[0].project_id});
@@ -128,7 +134,7 @@ export async function POST(req:NextRequest){try{
    if(a.id){const conflicts=await sql`SELECT 1 FROM tasks WHERE sprint_id=${a.id} AND project_id=${a.project_id} AND removed_at IS NULL AND approval<>'declined' AND (due_date<${a.start_date}::date OR due_date>${a.end_date}::date) LIMIT 1`;if(conflicts.length)throw new ApiError('These sprint dates would put an assigned task outside the sprint. Adjust the task first.');const rows=await sql`UPDATE sprints SET name=${a.name},start_date=${a.start_date},end_date=${a.end_date},color=${a.color} WHERE id=${a.id} AND project_id=${a.project_id} RETURNING id`;if(!rows.length)throw new ApiError('Sprint could not be found.',404);}
    else await sql`INSERT INTO sprints(project_id,name,start_date,end_date,color) VALUES(${a.project_id},${a.name},${a.start_date},${a.end_date},${a.color})`;
   }else if(a.action==='note'){
-   await sql`INSERT INTO notes(project_id,author_id,body,kind) VALUES(${a.project_id},${u.id},${a.body},${a.kind})`;
+   await sql`INSERT INTO notes(project_id,author_id,title,icon,body,kind) VALUES(${a.project_id},${u.id},${a.title},${a.icon},${a.body},'note')`;
   }else if(a.action==='invite'){
    const rows=await sql`INSERT INTO invitations(project_id,email,role) VALUES(${a.project_id},${a.email.toLowerCase()},${a.role}) ON CONFLICT(project_id,email) DO UPDATE SET token=gen_random_uuid(),role=excluded.role,expires_at=now()+interval '7 days' RETURNING token`;
    return Response.json({token:rows[0].token});

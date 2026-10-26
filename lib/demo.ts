@@ -1,6 +1,6 @@
 import type {Data,Task} from './types';
 export const demoUser={id:'demo-ava',name:'Ava Morgan',email:'ava@example.com'};
-export const demoStorageKey='common-ground-demo-v4';
+export const demoStorageKey='common-ground-demo-v5';
 
 export function createDemoData(referenceDate:Date):Data{
  const base=Date.UTC(referenceDate.getFullYear(),referenceDate.getMonth(),referenceDate.getDate());
@@ -48,15 +48,15 @@ export function createDemoData(referenceDate:Date):Data{
   task('t22','p3','Add a quiet study preference','Let classmates say whether they prefer a quiet session or a discussion-based study group.','demo-sam','todo','medium',9,'s5','pending')
  ],
  notes:[
-  {id:'n1',project_id:'p1',author_id:'demo-jules',body:'The garden center can donate the first tray of seedlings. We can pick them up once we have agreed on the bed layout. Ava’s drawings will help us work out how much space we need.',kind:'note',created_at:stamp(0,18)},
-  {id:'n2',project_id:'p1',author_id:'demo-noor',body:'A thank-you to Sam for staying after school to measure the courtyard with me. We found a sunny spot for the herbs and still have plenty of room for a path.',kind:'shoutout',created_at:stamp(-1,17)},
-  {id:'n3',project_id:'p1',author_id:'demo-ava',body:'For planting day, bring a water bottle and shoes you do not mind getting muddy. We will share tools, and there will be a job for everyone.',kind:'note',created_at:stamp(-2,16)},
-  {id:'n4',project_id:'p1',author_id:'demo-ava',body:'Our first planning meeting is in the library on Thursday. Bring one idea for what we could grow.',kind:'note',created_at:stamp(-6),archived_at:stamp(-3)},
-  {id:'n5',project_id:'p2',author_id:'demo-jules',body:'The bookshop interview is ready to transcribe. There is a lovely story about the shop’s first customer that could open the issue. I have added the recording notes to our shared folder.',kind:'note',created_at:stamp(0,17)},
-  {id:'n6',project_id:'p2',author_id:'demo-ava',body:'Sam caught the morning light at the market beautifully. The photos make the neighborhood feel familiar and full of stories.',kind:'shoutout',created_at:stamp(-1)},
-  {id:'n7',project_id:'p3',author_id:'demo-noor',body:'Most classmates want to find people studying the same subject before choosing a time. Let’s make that the first step on the study-partner screen.',kind:'note',created_at:stamp(0,16)},
-  {id:'n8',project_id:'p3',author_id:'demo-ava',body:'Thanks to Jules for testing the wireframes on a phone. The larger subject buttons are much easier to use now.',kind:'shoutout',created_at:stamp(-1,18)},
-  {id:'n9',project_id:'p3',author_id:'demo-sam',body:'We are collecting ideas for the app name this week. Add your suggestions before our next meeting.',kind:'note',created_at:stamp(-3),archived_at:stamp(-1)}
+  {id:'n1',title:"The seedlings are ready",icon:'milestone',project_id:'p1',author_id:'demo-jules',body:'The garden center can donate the first tray of seedlings. We can pick them up once we have agreed on the bed layout. Ava’s drawings will help us work out how much space we need.',kind:'note',created_at:stamp(0,18)},
+  {id:'n2',title:"Thanks for lending a hand",icon:'none',project_id:'p1',author_id:'demo-noor',body:'A thank-you to Sam for staying after school to measure the courtyard with me. We found a sunny spot for the herbs and still have plenty of room for a path.',kind:'shoutout',created_at:stamp(-1,17)},
+  {id:'n3',title:"What to bring on planting day",icon:'urgent',project_id:'p1',author_id:'demo-ava',body:'For planting day, bring a water bottle and shoes you do not mind getting muddy. We will share tools, and there will be a job for everyone.',kind:'note',created_at:stamp(-2,16)},
+  {id:'n4',title:"Our first garden meeting",icon:'none',project_id:'p1',author_id:'demo-ava',body:'Our first planning meeting is in the library on Thursday. Bring one idea for what we could grow.',kind:'note',created_at:stamp(-6),archived_at:stamp(-3)},
+  {id:'n5',title:"A story from the bookshop",icon:'idea',project_id:'p2',author_id:'demo-jules',body:'The bookshop interview is ready to transcribe. There is a lovely story about the shop’s first customer that could open the issue. I have added the recording notes to our shared folder.',kind:'note',created_at:stamp(0,17)},
+  {id:'n6',title:"The market, through Sam’s lens",icon:'none',project_id:'p2',author_id:'demo-ava',body:'Sam caught the morning light at the market beautifully. The photos make the neighborhood feel familiar and full of stories.',kind:'shoutout',created_at:stamp(-1)},
+  {id:'n7',title:"Should we choose the subject first?",icon:'question',project_id:'p3',author_id:'demo-noor',body:'Most classmates want to find people studying the same subject before choosing a time. Let’s make that the first step on the study-partner screen.',kind:'note',created_at:stamp(0,16)},
+  {id:'n8',title:"A clearer view on a small screen",icon:'none',project_id:'p3',author_id:'demo-ava',body:'Thanks to Jules for testing the wireframes on a phone. The larger subject buttons are much easier to use now.',kind:'shoutout',created_at:stamp(-1,18)},
+  {id:'n9',title:"Help us name the app",icon:'question',project_id:'p3',author_id:'demo-sam',body:'We are collecting ideas for the app name this week. Add your suggestions before our next meeting.',kind:'note',created_at:stamp(-3),archived_at:stamp(-1)}
  ],
  comments:[
   {id:'c1',note_id:'n1',author_id:'demo-ava',body:'I’ll bring both layouts tomorrow so we can choose before collecting the seedlings.',created_at:stamp(0,19)},
