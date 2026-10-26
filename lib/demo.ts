@@ -3,15 +3,15 @@ export const demoUser={id:'demo-ava',name:'Ava Morgan',email:'ava@example.com'};
 export const demoData:Data={
 comments:[],reactions:[],
 projects:[
-{id:'p1',name:'The neighborhood table',description:'Bringing our community together, one shared meal at a time.',color:'rust',due_date:'2026-11-14',role:'lead'},
-{id:'p2',name:'A field guide to somewhere',description:'An independent journal for the places just beyond our doorstep.',color:'sage',due_date:'2026-11-28',role:'member'},
-{id:'p3',name:'Studio, reimagined',description:'Making a little more room for our next big ideas.',color:'blue',due_date:'2026-12-04',role:'lead'}],
+{id:'p1',name:'The neighborhood table',description:'Bringing our community together, one shared meal at a time.',color:'rust',due_date:'2026-11-14',role:'lead',owner_id:'demo-ava'},
+{id:'p2',name:'A field guide to somewhere',description:'An independent journal for the places just beyond our doorstep.',color:'sage',due_date:'2026-11-28',role:'member',owner_id:'demo-jules'},
+{id:'p3',name:'Studio, reimagined',description:'Making a little more room for our next big ideas.',color:'blue',due_date:'2026-12-04',role:'lead',owner_id:'demo-ava'}],
 members:[...['p1','p2','p3'].flatMap((p,i)=>[
 {...demoUser,project_id:p,role:(i===1?'member':'lead') as 'lead'|'member'},
 {id:'demo-jules',name:'Jules Bennett',email:'jules@example.com',project_id:p,role:(i===1?'lead':'member') as 'lead'|'member'},
 {id:'demo-sam',name:'Sam Rivera',email:'sam@example.com',project_id:p,role:'member' as const},
 {id:'demo-noor',name:'Noor Patel',email:'noor@example.com',project_id:p,role:'member' as const}])],
-sprints:[{id:'s3',project_id:'p1',name:'Bringing everyone together',start_date:'2026-11-02',end_date:'2026-11-14'},{id:'s1',project_id:'p1',name:'Setting the table',start_date:'2026-10-19',end_date:'2026-11-01'},{id:'s2',project_id:'p2',name:'Stories taking shape',start_date:'2026-10-19',end_date:'2026-11-01'}],
+sprints:[{id:'s3',project_id:'p1',name:'Bringing everyone together',color:'rust',start_date:'2026-11-02',end_date:'2026-11-14'},{id:'s1',project_id:'p1',name:'Setting the table',color:'sage',start_date:'2026-10-19',end_date:'2026-11-01'},{id:'s2',project_id:'p2',name:'Stories taking shape',color:'blue',start_date:'2026-10-19',end_date:'2026-11-01'}],
 tasks:[
 {id:'t1',project_id:'p1',title:'Bring the visual direction together',description:'Gather the references and put together a first look at the event identity.',assignee_id:'demo-ava',status:'doing',priority:'high',due_date:'2026-10-26',sprint_id:'s1'},
 {id:'t2',project_id:'p1',title:'Confirm the community kitchen',description:'Check capacity, accessibility, and the equipment we can use.',assignee_id:'demo-jules',status:'review',priority:'high',due_date:'2026-10-27',sprint_id:'s1'},

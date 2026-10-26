@@ -13,21 +13,26 @@ The application uses Fraunces for its expressive headings and DM Sans for workin
 | Neon authentication | Three generated verification accounts successfully registered and authenticated |
 | Multiple project roles | The same account led one project and joined another as a member |
 | Invitations | Correct recipient accepted; a different account was rejected |
-| Task planning | Lead created a chapter, assigned a task, and persisted its due date |
+| Task planning | Lead created a sprint, assigned a task, and persisted its due date |
 | Task submissions | Members submitted pending tasks; only leaders could approve or decline; pending/declined tasks could not be started |
 | Task editing and removal | Leader changes persisted; removed tasks disappeared and could be restored; members were denied planning mutations |
 | Task authorization | Members could update their own assigned task status; unrelated users were rejected |
-| Date validation | An impossible calendar date was rejected |
+| Date validation | Impossible dates and task dates outside the assigned sprint were rejected; both sprint boundary dates were accepted; sprint edits that exclude existing tasks were rejected |
 | Shared notes | Members published a shoutout visible to the project lead; outsiders were rejected |
 | Note conversations | Comments persisted for peers; reactions toggled without duplicate records; outsiders and mismatched project IDs were rejected |
-| Project covers | Leader uploads persisted for peers; members and unsupported SVG uploads were rejected; original artwork could be restored |
+| Project covers | Uploads and allowlisted photo templates persisted; all eight Unsplash URLs returned image responses; gallery categories and attribution rendered; unsupported uploads/templates were rejected |
+| Sprint colors | Six colors are available; color edits persist and apply to the overview and calendar |
+| Note archiving | Authors and leads can archive/restore; other members and outsiders are denied; archived notes reject new comments/reactions |
+| People management | Role changes persist; owner removal/demotion and unauthorized transfers are rejected; ownership transfers atomically; removing a member revokes project access and unassigns tasks; a new invitation restores membership |
 | Private messages | Participants could exchange/read messages; outsiders could neither send nor retrieve them |
 | Read state | Reading a conversation persisted the read timestamp |
-| Browser interaction | Verified chapter navigation and its progress counts, collapse/expand, task edit/save, removal/undo, comments/reactions, and a member submission appearing in the approval queue |
+| Browser interaction | Verified categorized photo selection/save, collapsed defaults and hidden management controls, native date rejection, sprint color editing, archive/restore views, and role editing |
 | Responsive layout | Reviewed at 1440×1000, 390×844, and 304×700; fixed narrow navigation and search overflow |
 | Browser console | No console entries during the final browser review |
 | Database | Ten application tables have row-level security enabled; collaboration migration preserves existing tasks |
 | Secrets | Local environment files are ignored; only `.env.example` is tracked |
+
+The project-controls update was checked with a complete local production build and the expanded real-Neon integration suite. Browser review returned no warnings or errors.
 
 The integration tests created private verification records under generated accounts and did not contact real people. The visible example workspace is separate, browser-local data. New real users receive their own empty workspace.
 
