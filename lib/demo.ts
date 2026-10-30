@@ -9,6 +9,13 @@ export function createDemoData(referenceDate:Date):Data{
  const people=[demoUser,{id:'demo-jules',name:'Jules Bennett',email:'jules@example.com'},{id:'demo-sam',name:'Sam Rivera',email:'sam@example.com'},{id:'demo-noor',name:'Noor Patel',email:'noor@example.com'}];
  const task=(id:string,project_id:string,title:string,description:string,assignee_id:string,status:string,priority:string,day:number,sprint_id:string,approval:'approved'|'pending'='approved'):Task=>({id,project_id,title,description,assignee_id,status,priority,due_date:date(day),sprint_id,approval,submitted_by:approval==='pending'?assignee_id:'demo-ava'});
  return {
+ room_messages:[
+  {id:'room-garden-1',project_id:'p1',sender_id:'demo-jules',sender_name:'Jules Bennett',body:'I checked the courtyard this morning. The corner near the library gets plenty of sun.',created_at:stamp(-1,16)},
+  {id:'room-garden-2',project_id:'p1',sender_id:'demo-ava',sender_name:'Ava Morgan',body:'That sounds like a good place for the herbs. I’ll add it to the layout before our next meeting.',created_at:stamp(-1,17)},
+  {id:'room-garden-3',project_id:'p1',sender_id:'demo-sam',sender_name:'Sam Rivera',body:'I can bring a measuring tape. Shall we leave a wider path between the beds?',created_at:stamp(0,15)},
+  {id:'room-print-1',project_id:'p2',sender_id:'demo-jules',sender_name:'Jules Bennett',body:'Share any neighborhood stories here while we decide what belongs in the first issue.',created_at:stamp(-1,16)},
+  {id:'room-study-1',project_id:'p3',sender_id:'demo-noor',sender_name:'Noor Patel',body:'The first screen sketches are ready. Could someone try the study-partner flow with me?',created_at:stamp(-1,16)}
+ ],
  projects:[
   {id:'p1',name:'The courtyard garden',description:'Turn the quiet corner behind the library into a garden everyone can help grow.',color:'sage',image_template:'nature-garden',due_date:date(20),role:'lead',owner_id:'demo-ava'},
   {id:'p2',name:'Our neighborhood, in print',description:'A student-made journal of the places, people, and small stories around our school.',color:'rust',image_template:'art-watercolor',due_date:date(18),role:'member',owner_id:'demo-jules'},

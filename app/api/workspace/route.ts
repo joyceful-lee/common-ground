@@ -53,7 +53,7 @@ export async function GET(){try{
  const u=await user(),sql=db();
  const [projects,members,tasks,sprints,notes,messages,comments,reactions,profiles]=await Promise.all([
  sql`SELECT p.*,coalesce(p.owner_id,p.created_by) AS owner_id,m.role FROM projects p JOIN memberships m ON m.project_id=p.id WHERE m.user_id=${u.id} AND m.active ORDER BY p.created_at`,
- sql`SELECT u.id,u.name,u.email,u.avatar_data,m.project_id,m.role,m.active FROM app_users u JOIN memberships m ON m.user_id=u.id WHERE m.project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active)`,
+ sql`SELECT u.id,u.name,u.email,u.avatar_data,m.project_id,m.role,m.active,m.chat_muted FROM app_users u JOIN memberships m ON m.user_id=u.id WHERE m.project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active)`,
  sql`SELECT * FROM tasks WHERE removed_at IS NULL AND project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active) ORDER BY sort_order,created_at,id`,
  sql`SELECT * FROM sprints WHERE project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active) ORDER BY start_date`,
  sql`SELECT * FROM notes WHERE removed_at IS NULL AND project_id IN (SELECT project_id FROM memberships WHERE user_id=${u.id} AND active) ORDER BY created_at DESC`,
